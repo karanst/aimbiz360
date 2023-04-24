@@ -23,6 +23,8 @@ final Uri referFormApi = Uri.parse(baseUrl + 'referral_form');
 final Uri referralListApi = Uri.parse(baseUrl + 'refferal_list');
 final Uri withdrawRequestApi = Uri.parse(baseUrl + 'withdrawl_request');
 final Uri transactionsListApi = Uri.parse(baseUrl + 'transactions');
+final Uri requestTrainingApi = Uri.parse(baseUrl + 'tranning_request');
+
 ///NEW APIS////////////
 
 final Uri setFavoriteApi = Uri.parse(baseUrl + 'add_to_favorites');

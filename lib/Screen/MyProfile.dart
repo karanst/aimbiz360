@@ -66,6 +66,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
   final passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController messageController = TextEditingController();
+
   String? currentPwd, newPwd, confirmPwd;
   FocusNode confirmPwdFocus = FocusNode();
 
@@ -74,6 +76,38 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
 
   Animation? buttonSqueezeanimation;
   AnimationController? buttonController;
+
+  requestTraining() async{
+    var headers = {
+      // 'Token': jwtToken.toString(),
+      // 'Authorisedkey': authKey.toString(),
+      'Cookie': 'ci_session=aa83f4f9d3335df625437992bb79565d0973f564'
+    };
+    var request = http.MultipartRequest('POST', Uri.parse(requestTrainingApi.toString()));
+    request.fields.addAll({
+      USER_ID: '$CUR_USERID',
+      'message': messageController.text.toString()
+    });
+
+    print("this is request training request ${request.fields.toString()}");
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      String str = await response.stream.bytesToString();
+      var result = json.decode(str);
+      setSnackbar("${result['message'].toString()}");
+      Navigator.pop(context);
+      // final finalResponse = AnimalTypeModel.fromJson(result);
+      // setState(() {
+      // animalList = finalResponse.data!;
+      // });
+      // print("this is operator list ----->>>> ${operatorList[0].name}");
+    }
+    else {
+      print(response.reasonPhrase);
+    }
+  }
 
   @override
   void initState() {
@@ -464,10 +498,10 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
             ? Container()
             : _getDrawerItem(getTranslated(context, 'MYWALLET')!,
                 'assets/images/pro_wh.svg'),
-        CUR_USERID == "" || CUR_USERID == null
-            ? Container()
-            : _getDrawerItem(getTranslated(context, 'MYEARNINGS')!,
-            'assets/images/pro_th.svg'),
+        // CUR_USERID == "" || CUR_USERID == null
+        //     ? Container()
+        //     : _getDrawerItem(getTranslated(context, 'MYEARNINGS')!,
+        //     'assets/images/pro_th.svg'),
         CUR_USERID == "" || CUR_USERID == null
             ? Container()
             : _getDrawerItem(getTranslated(context, 'MYTRANSACTION')!,
@@ -480,6 +514,10 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
         // CUR_USERID == "" || CUR_USERID == null ? Container() : _getDivider(),
         _getDrawerItem(getTranslated(context, 'CHANGE_THEME_LBL')!,
             'assets/images/pro_theme.svg'),
+        CUR_USERID == "" || CUR_USERID == null
+            ? Container()
+            : _getDrawerItem("Request Training",
+            'assets/images/pro_myorder.svg'),
         // _getDivider(),
         // _getDrawerItem(getTranslated(context, 'CHANGE_LANGUAGE_LBL')!,
         //     'assets/images/pro_language.svg'),
@@ -670,8 +708,13 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                     title: getTranslated(context, 'FAQS'),
                   ),
                 ));
-          } else if (title == getTranslated(context, 'CHANGE_THEME_LBL')) {
+
+          }
+          else if (title == getTranslated(context, 'CHANGE_THEME_LBL')) {
             openChangeThemeBottomSheet();
+          }
+          else if (title == "Request Training") {
+            openRequestTrainingBottomSheet();
           } else if (title == getTranslated(context, 'LOGOUT')) {
             logOutDailog();
           } else if (title == getTranslated(context, 'CHANGE_PASS_LBL')) {
@@ -1037,6 +1080,109 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     );
   }
 
+  void openRequestTrainingBottomSheet() {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(40.0), topRight: Radius.circular(40.0))),
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+
+            Padding(
+              padding: EdgeInsets.all(15),
+                child: Text("Request Training", style: TextStyle(color: Theme.of(context).colorScheme.fontColor, fontSize: 24, fontWeight: FontWeight.w600),)),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                padding:
+                EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                  child: TextFormField(
+                    //initialValue: nameController.text,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontWeight: FontWeight.bold),
+                    controller: messageController,
+                    decoration: InputDecoration(
+                        label: Text(
+                          "Message",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        fillColor: Theme.of(context).colorScheme.primary,
+                        border: InputBorder.none),
+                    // validator: (val) => validateUserName(
+                    //     val!,
+                    //     getTranslated(context, 'USER_REQUIRED'),
+                    //     getTranslated(context, 'USER_LENGTH')),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0, top: 10),
+              child: ElevatedButton(onPressed: (){
+               requestTraining();
+              },
+                  style: ElevatedButton.styleFrom(primary: colors.primary,
+                      fixedSize: Size(MediaQuery.of(context).size.width - 60, 50),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15
+                  ))),
+                  child: Text("Submit Request", style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16
+                      , color: colors.whiteTemp),)),
+            )
+            // Padding(
+            //   padding: EdgeInsets.only(
+            //       bottom: MediaQuery.of(context).viewInsets.bottom),
+            //   child: Form(
+            //     key: _changeUserDetailsKey,
+            //     child: Column(
+            //       mainAxisSize: MainAxisSize.max,
+            //       children: [
+            //         bottomSheetHandle(),
+            //         bottomsheetLabel("EDIT_PROFILE_LBL"),
+            //         Selector<UserProvider, String>(
+            //             selector: (_, provider) => provider.profilePic,
+            //             builder: (context, profileImage, child) {
+            //               return Padding(
+            //                 padding: const EdgeInsets.symmetric(vertical: 10.0),
+            //                 child: getUserImage(profileImage, _imgFromGallery),
+            //               );
+            //             }),
+            //         Selector<UserProvider, String>(
+            //             selector: (_, provider) => provider.curUserName,
+            //             builder: (context, userName, child) {
+            //               return setNameField(userName);
+            //             }),
+            //         Selector<UserProvider, String>(
+            //             selector: (_, provider) => provider.email,
+            //             builder: (context, userEmail, child) {
+            //               return setEmailField(userEmail);
+            //             }),
+            //         saveButton(getTranslated(context, "SAVE_LBL")!, () {
+            //           validateAndSave(_changeUserDetailsKey);
+            //         }),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget bottomSheetHandle() {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
@@ -1059,9 +1205,7 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     var result = await FilePicker.platform.pickFiles();
     if (result != null) {
       var image = File(result.files.single.path!);
-      if (mounted) {
-        await setProfilePic(image);
-      }
+
     } else {
       // User canceled the picker
     }
@@ -1220,7 +1364,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     form.save();
     if (form.validate()) {
       if (key == _changePwdKey) {
-        await setUpdateUser(CUR_USERID!, passwordController.text,
+        await setUpdateUser(
+            CUR_USERID!,
+            passwordController.text,
             newpassController.text, "", "");
         passwordController.clear();
         newpassController.clear();

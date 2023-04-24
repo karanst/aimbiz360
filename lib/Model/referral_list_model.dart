@@ -1,6 +1,6 @@
 /// error : false
 /// message : "Data Succesfully Show"
-/// data : [{"id":"4","user_id":"207","name":"Ajay ","mobile":"2147483647","share_info":"1","category_id":"1","assign_to":"0","status":"New Lead","created_at":"2023-04-21 14:51:23","update_at":"2023-04-21 14:51:23","product":"Credit Card"},{"id":"5","user_id":"207","name":"Harish ","mobile":"2147483647","share_info":"0","category_id":"5","assign_to":"0","status":"New Lead","created_at":"2023-04-21 14:53:24","update_at":"2023-04-21 14:53:24","product":"Credit Line Card"}]
+/// data : [{"id":"10","user_id":"206","name":"Harish","mobile":"2147483647","share_info":"1","category_id":"1","assign_to":"208","remark":null,"status":"New Lead","created_at":"2023-04-23 18:06:12","update_at":"2023-04-23 13:51:43","staff_name":"harish choudhary","staff_mobile":"7899666658","product":"Credit Card"},{"id":"9","user_id":"206","name":"H","mobile":"0","share_info":"1","category_id":"1","assign_to":"211","remark":null,"status":"New Lead","created_at":"2023-04-23 18:11:14","update_at":"2023-04-23 13:49:43","staff_name":"test","staff_mobile":"7888555522","product":"Credit Card"},{"id":"4","user_id":"206","name":"Ajay ","mobile":"2147483647","share_info":"1","category_id":"1","assign_to":"0","remark":null,"status":"Follow Up","created_at":"2023-04-22 19:23:05","update_at":"2023-04-21 14:51:23","staff_name":"","staff_mobile":"","product":"Credit Card"}]
 
 class ReferralListModel {
   ReferralListModel({
@@ -48,16 +48,19 @@ ReferralListModel copyWith({  bool? error,
 
 }
 
-/// id : "4"
-/// user_id : "207"
-/// name : "Ajay "
+/// id : "10"
+/// user_id : "206"
+/// name : "Harish"
 /// mobile : "2147483647"
 /// share_info : "1"
 /// category_id : "1"
-/// assign_to : "0"
+/// assign_to : "208"
+/// remark : null
 /// status : "New Lead"
-/// created_at : "2023-04-21 14:51:23"
-/// update_at : "2023-04-21 14:51:23"
+/// created_at : "2023-04-23 18:06:12"
+/// update_at : "2023-04-23 13:51:43"
+/// staff_name : "harish choudhary"
+/// staff_mobile : "7899666658"
 /// product : "Credit Card"
 
 class ReferList {
@@ -69,9 +72,12 @@ class ReferList {
       String? shareInfo, 
       String? categoryId, 
       String? assignTo, 
+      dynamic remark, 
       String? status, 
       String? createdAt, 
       String? updateAt, 
+      String? staffName, 
+      String? staffMobile, 
       String? product,}){
     _id = id;
     _userId = userId;
@@ -80,9 +86,12 @@ class ReferList {
     _shareInfo = shareInfo;
     _categoryId = categoryId;
     _assignTo = assignTo;
+    _remark = remark;
     _status = status;
     _createdAt = createdAt;
     _updateAt = updateAt;
+    _staffName = staffName;
+    _staffMobile = staffMobile;
     _product = product;
 }
 
@@ -94,9 +103,12 @@ class ReferList {
     _shareInfo = json['share_info'];
     _categoryId = json['category_id'];
     _assignTo = json['assign_to'];
+    _remark = json['remark'];
     _status = json['status'];
     _createdAt = json['created_at'];
     _updateAt = json['update_at'];
+    _staffName = json['staff_name'];
+    _staffMobile = json['staff_mobile'];
     _product = json['product'];
   }
   String? _id;
@@ -106,9 +118,12 @@ class ReferList {
   String? _shareInfo;
   String? _categoryId;
   String? _assignTo;
+  dynamic _remark;
   String? _status;
   String? _createdAt;
   String? _updateAt;
+  String? _staffName;
+  String? _staffMobile;
   String? _product;
 ReferList copyWith({  String? id,
   String? userId,
@@ -117,9 +132,12 @@ ReferList copyWith({  String? id,
   String? shareInfo,
   String? categoryId,
   String? assignTo,
+  dynamic remark,
   String? status,
   String? createdAt,
   String? updateAt,
+  String? staffName,
+  String? staffMobile,
   String? product,
 }) => ReferList(  id: id ?? _id,
   userId: userId ?? _userId,
@@ -128,9 +146,12 @@ ReferList copyWith({  String? id,
   shareInfo: shareInfo ?? _shareInfo,
   categoryId: categoryId ?? _categoryId,
   assignTo: assignTo ?? _assignTo,
+  remark: remark ?? _remark,
   status: status ?? _status,
   createdAt: createdAt ?? _createdAt,
   updateAt: updateAt ?? _updateAt,
+  staffName: staffName ?? _staffName,
+  staffMobile: staffMobile ?? _staffMobile,
   product: product ?? _product,
 );
   String? get id => _id;
@@ -140,9 +161,12 @@ ReferList copyWith({  String? id,
   String? get shareInfo => _shareInfo;
   String? get categoryId => _categoryId;
   String? get assignTo => _assignTo;
+  dynamic get remark => _remark;
   String? get status => _status;
   String? get createdAt => _createdAt;
   String? get updateAt => _updateAt;
+  String? get staffName => _staffName;
+  String? get staffMobile => _staffMobile;
   String? get product => _product;
 
   Map<String, dynamic> toJson() {
@@ -154,9 +178,12 @@ ReferList copyWith({  String? id,
     map['share_info'] = _shareInfo;
     map['category_id'] = _categoryId;
     map['assign_to'] = _assignTo;
+    map['remark'] = _remark;
     map['status'] = _status;
     map['created_at'] = _createdAt;
     map['update_at'] = _updateAt;
+    map['staff_name'] = _staffName;
+    map['staff_mobile'] = _staffMobile;
     map['product'] = _product;
     return map;
   }

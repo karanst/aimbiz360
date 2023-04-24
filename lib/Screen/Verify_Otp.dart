@@ -62,7 +62,8 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
       address,
       latitude,
       longitude,
-      image;
+      image,
+  leadsCount;
 
   @override
   void initState() {

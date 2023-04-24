@@ -2,13 +2,16 @@ import 'dart:convert';
 import 'package:aimbiz360/Helper/Color.dart';
 import 'package:aimbiz360/Helper/Session.dart';
 import 'package:aimbiz360/Helper/String.dart';
+import 'package:aimbiz360/Model/Section_Model.dart';
+
+import 'package:aimbiz360/Model/category_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ReferForm extends StatefulWidget {
-  final String? catId;
-  const ReferForm({Key? key, this.catId}) : super(key: key);
+   Product? data;
+   ReferForm({Key? key, this.data}) : super(key: key);
 
   @override
   State<ReferForm> createState() => _ReferFormState();
@@ -32,8 +35,10 @@ class _ReferFormState extends State<ReferForm> {
     super.initState();
     // getAnimalList();
   }
+  List options = ['Yes' , 'No'];
 
   String? categoryValue;
+  String? selectedOption;
   // List<AnimalList> animalList = [];
 
   submitLead() async{
@@ -48,7 +53,7 @@ class _ReferFormState extends State<ReferForm> {
     'name': nameController.text.toString(),
     'mobile': mobileController.text.toString(),
     'share_info': shareInfo,
-      'category_id': widget.catId!
+      'category_id': widget.data!.subList != null ? categoryValue.toString() : widget.data!.id.toString()
     });
 
     print("this is refer request ${request.fields.toString()}");
@@ -87,9 +92,43 @@ class _ReferFormState extends State<ReferForm> {
       body: SingleChildScrollView(
         child: Form(
           child: Padding(
-            padding: const EdgeInsets.only(left: 25.0, right: 25),
+            padding: const EdgeInsets.only(left: 25.0, right: 25, top: 25),
             child: Column(
               children: [
+                widget.data!.subList != null ?
+                Padding(
+                    padding: const EdgeInsets.only(top: 12, bottom: 12),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Theme.of(context).colorScheme.fontColor)
+                      ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      hint: Text('Select type'), // Not necessary for Option 1
+                      value: categoryValue,
+                      onChanged: (String? newValue) {
+                       setState(() {
+                         categoryValue = newValue;
+                       });
+                       print("this is category value $categoryValue");
+                      },
+                      items: widget.data!.subList!.map((item) {
+                        return DropdownMenuItem(
+                          child:  Text(item.name!, style:TextStyle(color: Theme.of(context).colorScheme.fontColor),),
+                          value: item.id,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                )
+                )
+                : SizedBox.shrink(),
+
                 Padding(
                   padding: const EdgeInsets.only(top: 12, bottom: 12),
                   child: Container(
@@ -102,6 +141,7 @@ class _ReferFormState extends State<ReferForm> {
                     ),
                     width: MediaQuery.of(context).size.width,
                     child: TextFormField(
+                      style: TextStyle(color: Theme.of(context).colorScheme.fontColor),
                       controller: nameController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
@@ -166,6 +206,7 @@ class _ReferFormState extends State<ReferForm> {
                     ),
                     width: MediaQuery.of(context).size.width,
                     child: TextFormField(
+                      style: TextStyle(color: Theme.of(context).colorScheme.fontColor),
                       keyboardType: TextInputType.number,
                       maxLength: 10,
                       controller: mobileController,
@@ -182,54 +223,84 @@ class _ReferFormState extends State<ReferForm> {
                     fontWeight: FontWeight.w600,
                     fontSize: 14
                 ),),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Radio(
-                            value: 1,
-                            fillColor: MaterialStateColor.resolveWith(
-                                    (states) =>  colors.primary),
-                            groupValue: _value,
-                            onChanged: (int? value) {
-                              setState(() {
-                                _value = value!;
-                                shareInfo = "1";
-                                // gender = 'male';
-                                // isUpi = false;
-                              });
-                            }),
-                        Text(
-                          "YES",
-                          // style: TextStyle(color:  colors.primary),
+                Padding(
+                    padding: const EdgeInsets.only(top: 12, bottom: 12),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Theme.of(context).colorScheme.fontColor)
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          hint: Text('Select option'), // Not necessary for Option 1
+                          value: selectedOption,
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedOption = newValue.toString();
+                            });
+                            print("this is selected option $selectedOption");
+                          },
+                          items: options.map((item) {
+                            return DropdownMenuItem(
+                              child:  Text(item, style:TextStyle(color: Theme.of(context).colorScheme.fontColor),),
+                              value: item,
+                            );
+                          }).toList(),
                         ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Radio(
-                            value: 2,
-                            fillColor: MaterialStateColor.resolveWith(
-                                    (states) => colors.primary),
-                            groupValue: _value,
-                            onChanged: (int? value) {
-                              setState(() {
-                                _value = value!;
-                                shareInfo = "0";
-                              });
-                            }),
-                        Text(
-                          "NO",
-                          // style: TextStyle(color:  colors.primary),
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    )
                 ),
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         Radio(
+                //             value: 1,
+                //             fillColor: MaterialStateColor.resolveWith(
+                //                     (states) =>  colors.primary),
+                //             groupValue: _value,
+                //             onChanged: (int? value) {
+                //               setState(() {
+                //                 _value = value!;
+                //                 shareInfo = "1";
+                //                 // gender = 'male';
+                //                 // isUpi = false;
+                //               });
+                //             }),
+                //         Text(
+                //           "YES",
+                //           // style: TextStyle(color:  colors.primary),
+                //         ),
+                //       ],
+                //     ),
+                //     Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         Radio(
+                //             value: 2,
+                //             fillColor: MaterialStateColor.resolveWith(
+                //                     (states) => colors.primary),
+                //             groupValue: _value,
+                //             onChanged: (int? value) {
+                //               setState(() {
+                //                 _value = value!;
+                //                 shareInfo = "0";
+                //               });
+                //             }),
+                //         Text(
+                //           "NO",
+                //           // style: TextStyle(color:  colors.primary),
+                //         ),
+                //       ],
+                //     ),
+                //   ],
+                // ),
                 // Padding(
                 //   padding: const EdgeInsets.only(top: 12, bottom: 12),
                 //   child: Container(

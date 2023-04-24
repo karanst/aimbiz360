@@ -5,6 +5,7 @@ class UserProvider extends ChangeNotifier {
   String _userName = '',
       _cartCount = '',
       _curBal = '',
+      _myLeads = '',
       _mob = '',
       _profilePic = '',
       _email = '';
@@ -21,6 +22,8 @@ class UserProvider extends ChangeNotifier {
   String get curCartCount => _cartCount;
 
   String get curBalance => _curBal;
+
+  String get myLeads => _myLeads;
 
   String get mob => _mob;
 
@@ -42,6 +45,11 @@ class UserProvider extends ChangeNotifier {
 
   void setBalance(String bal) {
     _curBal = bal;
+    notifyListeners();
+  }
+
+  void setMyLeads(String bal) {
+    _myLeads = bal;
     notifyListeners();
   }
 

@@ -74,7 +74,7 @@ class _MyLeadsState extends State<MyLeads> {
             child: Container(
               padding: EdgeInsets.all(15),
               width: MediaQuery.of(context).size.width,
-              height: 120,
+              height: 210,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.white,
                 border: Border.all(color: colors.primary),
@@ -101,13 +101,55 @@ class _MyLeadsState extends State<MyLeads> {
                       ),
                     ],
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+                    child: Row(
+                      children: [
+                        Text("Mobile : ", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.fontColor),),
+                        Text(referralList[index].mobile.toString(),
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,  color: Theme.of(context).colorScheme.fontColor) ),
+                      ],
+                    ),
+                  ),
                   Row(
                     children: [
-                      Text("Product : ", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.fontColor),),
+                      Text("Product Type : ", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.fontColor),),
                       Text(referralList[index].product.toString(),
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,  color: Theme.of(context).colorScheme.fontColor) ),
                     ],
                   ),
+                  Divider(
+                    thickness: 1,
+                    color: colors.secondary,),
+                  referralList[index].staffName.toString() != '' || referralList[index].staffName.toString() != null ?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Sales Co-ordinate Details : ",  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.fontColor),),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text("Name : ", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.fontColor),),
+                              Text(referralList[index].staffName.toString() ?? "Not Assigned yet!",
+                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,  color: Theme.of(context).colorScheme.fontColor) ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text("Mobile : ", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.fontColor),),
+                              Text(referralList[index].staffMobile.toString() ?? "Not Assigned yet!",
+                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,  color: Theme.of(context).colorScheme.fontColor) ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                    ],
+                  )
+                  : SizedBox.shrink(),
+
                   Spacer(),
                   Divider(
                     thickness: 2,
@@ -117,6 +159,7 @@ class _MyLeadsState extends State<MyLeads> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+
                       // Text("Product : ", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.fontColor),),
                       Container(
                         padding: EdgeInsets.all(8),

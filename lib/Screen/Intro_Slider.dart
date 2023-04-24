@@ -42,11 +42,11 @@ class _GettingStartedScreenState extends State<IntroSlider>
             title: getTranslated(context, 'TITLE2_LBL'),
             description: getTranslated(context, 'DISCRIPTION2'),
           ),
-          Slide(
-            imageUrl: 'assets/images/introimage_c.png',
-            title: getTranslated(context, 'TITLE3_LBL'),
-            description: getTranslated(context, 'DISCRIPTION3'),
-          ),
+          // Slide(
+          //   imageUrl: 'assets/images/introimage_c.png',
+          //   title: getTranslated(context, 'TITLE3_LBL'),
+          //   description: getTranslated(context, 'DISCRIPTION3'),
+          // ),
         ];
       });
     });
