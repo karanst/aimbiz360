@@ -140,8 +140,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     try {
       var data = {MOBILE: mobile};
       Response response =
-          await post(sendOtpApi, body: data, headers: headers)
-              .timeout(Duration(seconds: timeOut));
+          await post(sendOtpApi, body: data, headers: headers).timeout(Duration(seconds: timeOut));
 
       var getdata = json.decode(response.body);
 

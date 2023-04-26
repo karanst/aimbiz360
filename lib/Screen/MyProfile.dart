@@ -2,7 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:aimbiz360/Model/Section_Model.dart';
+import 'package:aimbiz360/Provider/CategoryProvider.dart';
+import 'package:aimbiz360/Provider/HomeProvider.dart';
 import 'package:aimbiz360/Screen/Dashboard.dart';
+import 'package:aimbiz360/Screen/HomePage.dart';
 import 'package:aimbiz360/Screen/my_leads.dart';
 import 'package:aimbiz360/Screen/my_leads_accounts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -86,7 +90,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     var request = http.MultipartRequest('POST', Uri.parse(requestTrainingApi.toString()));
     request.fields.addAll({
       USER_ID: '$CUR_USERID',
-      'message': messageController.text.toString()
+      'message': messageController.text.toString(),
+      'product_id': categoryValue != null ?
+          categoryValue.toString() : ""
     });
 
     print("this is request training request ${request.fields.toString()}");
@@ -108,6 +114,43 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       print(response.reasonPhrase);
     }
   }
+
+
+  void getCat() {
+    Map parameter = {
+      // CAT_FILTER: "false",
+    };
+    apiBaseHelper.postAPICall(getCatApi, parameter).then((getdata) {
+      print(getCatApi.toString());
+      print(parameter.toString());
+      bool error = getdata["error"];
+      String? msg = getdata["message"];
+      if (!error) {
+        var data = getdata["data"];
+        catList =
+            (data as List).map((data) => new Product.fromCat(data)).toList();
+        if (getdata.containsKey("popular_categories")) {
+          var data = getdata["popular_categories"];
+          popularList =
+              (data as List).map((data) => new Product.fromCat(data)).toList();
+          if (popularList.length > 0) {
+            Product pop =
+            new Product.popular("Popular", imagePath + "popular.svg");
+            catList.insert(0, pop);
+            context.read<CategoryProvider>().setSubList(popularList);
+          }
+        }
+      } else {
+
+      }
+
+      context.read<HomeProvider>().setCatLoading(false);
+    }, onError: (error) {
+      // setSnackbar(error.toString(), context);
+      context.read<HomeProvider>().setCatLoading(false);
+    });
+  }
+
 
   @override
   void initState() {
@@ -140,6 +183,7 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     });
 
     super.initState();
+    getCat();
   }
 
   _getSaved() async {
@@ -1080,6 +1124,7 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     );
   }
 
+  String?  categoryValue;
   void openRequestTrainingBottomSheet() {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -1088,97 +1133,177 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return Wrap(
-          alignment: WrapAlignment.center,
-          children: [
+         return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+           return
 
-            Padding(
-              padding: EdgeInsets.all(15),
-                child: Text("Request Training", style: TextStyle(color: Theme.of(context).colorScheme.fontColor, fontSize: 24, fontWeight: FontWeight.w600),)),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Container(
-                padding:
-                EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                  child: TextFormField(
-                    //initialValue: nameController.text,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.fontColor,
-                        fontWeight: FontWeight.bold),
-                    controller: messageController,
-                    decoration: InputDecoration(
-                        label: Text(
-                          "Message",
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                        fillColor: Theme.of(context).colorScheme.primary,
-                        border: InputBorder.none),
-                    // validator: (val) => validateUserName(
-                    //     val!,
-                    //     getTranslated(context, 'USER_REQUIRED'),
-                    //     getTranslated(context, 'USER_LENGTH')),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20.0, top: 10),
-              child: ElevatedButton(onPressed: (){
-               requestTraining();
-              },
-                  style: ElevatedButton.styleFrom(primary: colors.primary,
-                      fixedSize: Size(MediaQuery.of(context).size.width - 60, 50),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15
-                  ))),
-                  child: Text("Submit Request", style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16
-                      , color: colors.whiteTemp),)),
-            )
-            // Padding(
-            //   padding: EdgeInsets.only(
-            //       bottom: MediaQuery.of(context).viewInsets.bottom),
-            //   child: Form(
-            //     key: _changeUserDetailsKey,
-            //     child: Column(
-            //       mainAxisSize: MainAxisSize.max,
-            //       children: [
-            //         bottomSheetHandle(),
-            //         bottomsheetLabel("EDIT_PROFILE_LBL"),
-            //         Selector<UserProvider, String>(
-            //             selector: (_, provider) => provider.profilePic,
-            //             builder: (context, profileImage, child) {
-            //               return Padding(
-            //                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-            //                 child: getUserImage(profileImage, _imgFromGallery),
-            //               );
-            //             }),
-            //         Selector<UserProvider, String>(
-            //             selector: (_, provider) => provider.curUserName,
-            //             builder: (context, userName, child) {
-            //               return setNameField(userName);
-            //             }),
-            //         Selector<UserProvider, String>(
-            //             selector: (_, provider) => provider.email,
-            //             builder: (context, userEmail, child) {
-            //               return setEmailField(userEmail);
-            //             }),
-            //         saveButton(getTranslated(context, "SAVE_LBL")!, () {
-            //           validateAndSave(_changeUserDetailsKey);
-            //         }),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-          ],
-        );
+             Wrap(
+               alignment: WrapAlignment.center,
+               children: [
+
+                 Padding(
+                     padding: EdgeInsets.all(15),
+                     child: Text(
+                       "Request Training", style: TextStyle(color: Theme
+                         .of(context)
+                         .colorScheme
+                         .fontColor,
+                         fontSize: 24,
+                         fontWeight: FontWeight.w600),)),
+                 catList.isNotEmpty ?
+                 Padding(
+                     padding: const EdgeInsets.all(20),
+                     child: Container(
+                       padding: EdgeInsets.all(8),
+                       height: 50,
+                       width: MediaQuery
+                           .of(context)
+                           .size
+                           .width,
+                       decoration: BoxDecoration(
+                           color: Theme
+                               .of(context)
+                               .colorScheme
+                               .white,
+                           borderRadius: BorderRadius.circular(12),
+                           border: Border.all(color: Theme
+                               .of(context)
+                               .colorScheme
+                               .fontColor)
+                       ),
+                       child: DropdownButtonHideUnderline(
+                         child: DropdownButton(
+                           hint: Text('Select Product type'),
+                           // Not necessary for Option 1
+                           value: categoryValue,
+                           onChanged: (String? newValue) {
+                             setState(() {
+                               categoryValue = newValue;
+                             });
+                             print("this is category value $categoryValue");
+                           },
+                           items: catList.map((item) {
+                             return DropdownMenuItem(
+                               child: Text(
+                                 item.name!, style: TextStyle(color: Theme
+                                   .of(context)
+                                   .colorScheme
+                                   .fontColor),),
+                               value: item.id,
+                             );
+                           }).toList(),
+                         ),
+                       ),
+                     )
+                 )
+                     : SizedBox.shrink(),
+                 Padding(
+                   padding: const EdgeInsets.all(20),
+                   child: Container(
+                     padding:
+                     EdgeInsets.only(bottom: MediaQuery
+                         .of(context)
+                         .viewInsets
+                         .bottom),
+                     decoration: BoxDecoration(
+                       color: Theme
+                           .of(context)
+                           .colorScheme
+                           .white,
+                       borderRadius: BorderRadius.circular(10.0),
+                     ),
+                     child: Padding(
+                       padding:
+                       const EdgeInsets.symmetric(
+                           horizontal: 10.0, vertical: 5.0),
+                       child: TextFormField(
+                         //initialValue: nameController.text,
+                         style: TextStyle(
+                             color: Theme
+                                 .of(context)
+                                 .colorScheme
+                                 .fontColor,
+                             fontWeight: FontWeight.bold),
+                         controller: messageController,
+                         decoration: InputDecoration(
+                             label: Text(
+                               "Message",
+                               style: TextStyle(
+                                 color: Theme
+                                     .of(context)
+                                     .colorScheme
+                                     .primary,
+                               ),
+                             ),
+                             fillColor: Theme
+                                 .of(context)
+                                 .colorScheme
+                                 .primary,
+                             border: InputBorder.none),
+                         // validator: (val) => validateUserName(
+                         //     val!,
+                         //     getTranslated(context, 'USER_REQUIRED'),
+                         //     getTranslated(context, 'USER_LENGTH')),
+                       ),
+                     ),
+                   ),
+                 ),
+                 Padding(
+                   padding: const EdgeInsets.only(bottom: 20.0, top: 10),
+                   child: ElevatedButton(onPressed: () {
+                     requestTraining();
+                   },
+                       style: ElevatedButton.styleFrom(primary: colors.primary,
+                           fixedSize: Size(MediaQuery
+                               .of(context)
+                               .size
+                               .width - 60, 50),
+                           shape: RoundedRectangleBorder(
+                               borderRadius: BorderRadius.circular(15
+                               ))),
+                       child: Text("Submit Request", style: TextStyle(
+                           fontWeight: FontWeight.w600, fontSize: 16
+                           , color: colors.whiteTemp),)),
+                 )
+                 // Padding(
+                 //   padding: EdgeInsets.only(
+                 //       bottom: MediaQuery.of(context).viewInsets.bottom),
+                 //   child: Form(
+                 //     key: _changeUserDetailsKey,
+                 //     child: Column(
+                 //       mainAxisSize: MainAxisSize.max,
+                 //       children: [
+                 //         bottomSheetHandle(),
+                 //         bottomsheetLabel("EDIT_PROFILE_LBL"),
+                 //         Selector<UserProvider, String>(
+                 //             selector: (_, provider) => provider.profilePic,
+                 //             builder: (context, profileImage, child) {
+                 //               return Padding(
+                 //                 padding: const EdgeInsets.symmetric(vertical: 10.0),
+                 //                 child: getUserImage(profileImage, _imgFromGallery),
+                 //               );
+                 //             }),
+                 //         Selector<UserProvider, String>(
+                 //             selector: (_, provider) => provider.curUserName,
+                 //             builder: (context, userName, child) {
+                 //               return setNameField(userName);
+                 //             }),
+                 //         Selector<UserProvider, String>(
+                 //             selector: (_, provider) => provider.email,
+                 //             builder: (context, userEmail, child) {
+                 //               return setEmailField(userEmail);
+                 //             }),
+                 //         saveButton(getTranslated(context, "SAVE_LBL")!, () {
+                 //           validateAndSave(_changeUserDetailsKey);
+                 //         }),
+                 //       ],
+                 //     ),
+                 //   ),
+                 // ),
+               ],
+             );
+         }
+         );
       },
     );
   }

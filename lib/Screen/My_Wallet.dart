@@ -14,7 +14,7 @@ import 'package:http/http.dart';
 import 'package:paytm/paytm.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-
+import 'package:http/http.dart' as http;
 import '../Helper/AppBtn.dart';
 import '../Helper/Color.dart';
 import '../Helper/Constant.dart';
@@ -130,6 +130,8 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1049,13 +1051,13 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                                         Theme.of(context).colorScheme.fontColor,
                                     fontWeight: FontWeight.bold));
                       }),
-                      // SimBtn(
-                      //   size: 0.8,
-                      //   title: getTranslated(context, "ADD_MONEY"),
-                      //   onBtnSelected: () {
-                      //     _showDialog();
-                      //   },
-                      // ),
+                      SimBtn(
+                        size: 0.8,
+                        title: getTranslated(context, "ADD_MONEY"),
+                        onBtnSelected: () {
+                          _showDialog();
+                        },
+                      ),
                       SimBtn(
                         size: 0.9,
                         title: "Withdraw Money",

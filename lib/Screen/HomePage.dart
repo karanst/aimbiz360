@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:aimbiz360/Model/category_model.dart';
+import 'package:aimbiz360/Screen/My_Wallet.dart';
 import 'package:aimbiz360/Screen/SendOtp.dart';
+import 'package:aimbiz360/Screen/my_leads_accounts.dart';
 import 'package:aimbiz360/Screen/refer_form.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:aimbiz360/Helper/ApiBaseHelper.dart';
@@ -381,47 +383,14 @@ class _HomePageState extends State<HomePage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-      Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15)
-        ),
-        child: Container(
-          height: MediaQuery.of(context).size.width/2-40,
-          width: MediaQuery.of(context).size.width/2-40,
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Consumer<UserProvider>(
-                    builder: (context, userProvider, _) {
-                      return Text(
-                          CUR_CURRENCY! +
-                              " " +
-                              double.parse(userProvider.curBalance)
-                                  .toStringAsFixed(2),
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w600,
-                          color: colors.secondary
-                      ),);
-                    }),
-                Text("Total Earning", style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.fontColor
-                ),),
-
-              ],
-            ),
-          ),
-        ),
-      ),
-        Card(
+      InkWell(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> MyWallet()));
+        },
+        child: Card(
           elevation: 4,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15)
+            borderRadius: BorderRadius.circular(15)
           ),
           child: Container(
             height: MediaQuery.of(context).size.width/2-40,
@@ -434,21 +403,65 @@ class _HomePageState extends State<HomePage>
                   Consumer<UserProvider>(
                       builder: (context, userProvider, _) {
                         return Text(
-                          leadsCount != '' || leadsCount != null ?
-                          leadsCount.toString()
-                          : '0',
+                          myEarnings == '' || myEarnings == null ?
+                            CUR_CURRENCY! +
+                                " " + "0"
+                          :   CUR_CURRENCY! +
+                              " " + myEarnings.toString(),
                           style: TextStyle(
-                              fontSize: 36,
-                              fontWeight: FontWeight.w600,
-                              color: colors.secondary
-                          ),);
+                            fontSize: 36,
+                            fontWeight: FontWeight.w600,
+                            color: colors.secondary
+                        ),);
                       }),
-                  Text("My Leads", style: TextStyle(
+                  Text("My Earning", style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.fontColor
                   ),),
+
                 ],
+              ),
+            ),
+          ),
+        ),
+      ),
+        InkWell(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> MyLeadsAccounts()));
+          },
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15)
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.width/2-40,
+              width: MediaQuery.of(context).size.width/2-40,
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Consumer<UserProvider>(
+                        builder: (context, userProvider, _) {
+                          return Text(
+                            leadsCount == '' || leadsCount == null ?
+                                '0'
+                            : leadsCount.toString(),
+                            style: TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.w600,
+                                color: colors.secondary
+                            ),);
+                        }),
+                    Text("My Leads", style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.fontColor
+                    ),),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1503,6 +1516,7 @@ class _HomePageState extends State<HomePage>
     });
   }
   String? leadsCount;
+  String? myEarnings;
 
   void getSetting() {
     CUR_USERID = context.read<SettingProvider>().userId;
@@ -1549,6 +1563,7 @@ class _HomePageState extends State<HomePage>
               .read<UserProvider>()
               .setBalance(getdata["data"]["user_data"][0]["balance"]);
            leadsCount = getdata["data"]["total_leads"];
+          myEarnings = getdata["data"]["user_data"][0]["balance"];
 
           _getFav();
           _getCart("0");
