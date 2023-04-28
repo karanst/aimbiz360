@@ -608,7 +608,7 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    //placeOrder(response.paymentId);
+    // placeOrder(response.paymentId);
     // sendRequest(response.paymentId, "RazorPay");
   }
 
